@@ -7,6 +7,7 @@ import numpy as np
 from IPython.core.display import display_html
 from matplotlib import pyplot as plt
 from scipy import spatial
+from scipy import stats
 from tabulate import tabulate
 
 
@@ -229,3 +230,8 @@ def tabulate_neatly(table, headers=None, title=None, **kwargs):
     if title is not None:
         display_html(f"<h3>{title}</h3>\n", raw=True)
     display_html(tabulate(table, headers=headers, tablefmt="html", **kwargs))
+
+def compute_log_marginal(PHI, y, alph, s2):
+    M, N = PHI.shape
+    cov_matrix = (s2 * np.eye(M)) + (1 / alph) * PHI @ PHI.T
+    return stats.multivariate_normal.logpdf(y.ravel(), np.zeros(M), cov_matrix, allow_singular=True)
